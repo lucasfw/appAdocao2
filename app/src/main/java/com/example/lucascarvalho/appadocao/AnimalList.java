@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -23,7 +25,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -38,6 +44,28 @@ public class AnimalList extends AppCompatActivity {
     GridView gridView;
     ArrayList<Animal> list;
     AnimalListAdapter adapter = null;
+    public final static String teste ="com.example.lucascarvalho.appadocao.Id";
+    static String t= "aas";
+    static String f = "desc";
+
+    static String b;
+
+    private String getAnimal(int id){
+        Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT * FROM ANIMAIS WHERE ID =" + id);
+
+        String name = "aaa";
+        while (cursor.moveToNext()){
+            int idA = cursor.getInt(0);
+            name = cursor.getString(1);
+            String descricao = cursor.getString(2);
+            byte[] image = cursor.getBlob(3);
+
+        }
+        adapter.notifyDataSetChanged();
+        return name;
+    }
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +77,14 @@ public class AnimalList extends AppCompatActivity {
         adapter = new AnimalListAdapter(this, R.layout.animal_items, list);
         gridView.setAdapter(adapter);
 
+
+
         //get todos dados do sqlite
         Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT * FROM ANIMAIS");
         list.clear();
         while (cursor.moveToNext()){
             int id = cursor.getInt(0);
+
             String name = cursor.getString(1);
             String descricao = cursor.getString(2);
             byte[] image = cursor.getBlob(3);
@@ -87,8 +118,14 @@ public class AnimalList extends AppCompatActivity {
                             ArrayList<Integer> arrID = new ArrayList<Integer>();
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
-                            }
-                            showDialogDelete(arrID.get(position));
+                            };
+
+                            Intent i = new Intent(AnimalList.this, AnimalView.class);
+
+                            i.putExtra(t,MainActivity.sqLiteHelper.selectData(arrID.get(position)).getDescricao());
+                            i.putExtra(f,MainActivity.sqLiteHelper.selectData(arrID.get(position)).getName());
+                            i.putExtra(b,MainActivity.sqLiteHelper.selectData(arrID.get(position)).getImage());
+                            startActivity(i);
                         }
                     }
                 });
@@ -96,6 +133,23 @@ public class AnimalList extends AppCompatActivity {
                 return true;
             }
         });
+
+
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id){
+                Intent i = new Intent(AnimalList.this, AnimalView.class);
+
+
+                i.putExtra(teste,String.valueOf(getAnimal((int)id)));
+
+                startActivity(i);
+            }
+        });
+
+
     }
     ImageView imageViewAnimal;
 

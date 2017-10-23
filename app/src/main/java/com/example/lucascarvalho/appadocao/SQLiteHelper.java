@@ -50,6 +50,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         database.close();
     }
 
+    public Animal selectData(int id){
+        String sql = "SELECT * FROM ANIMAIS WHERE id =" + id;
+        SQLiteDatabase database = getWritableDatabase();
+        Cursor cursor = database.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        String nome = cursor.getString(cursor.getColumnIndex("name"));
+        String descricao = cursor.getString(cursor.getColumnIndex("descricao"));
+        byte[] image = cursor.getBlob(cursor.getColumnIndex("image"));
+        StringBuilder conversor1 = new StringBuilder();
+        StringBuilder conversor2 = new StringBuilder();
+        StringBuilder conversor3 = new StringBuilder();
+        conversor1.append(nome);
+        conversor2.append(descricao);
+        conversor3.append(image);
+        Animal a = new Animal(id, conversor1.toString(), conversor2.toString(), image);
+        return a;
+    }
+
     public void deleteData(int id){
         SQLiteDatabase database = getWritableDatabase();
 

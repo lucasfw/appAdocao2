@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageViewAnimal"
+        android:id="@+id/imageViewAnimalSolo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentTop="true"
